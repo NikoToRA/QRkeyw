@@ -1,0 +1,6 @@
+pyserial
+pynput
+qrcode
+pillow
+cryptography
+pyinstaller 
