@@ -1,48 +1,86 @@
-# QR2Key
+# QR2Key - QRコードからキーボード入力ツール
 
-Convert QR codes to cryptographic keys and vice versa. This tool provides functionality for generating secure keys and representing them as QR codes.
+## 概要
 
-## Features
+このアプリケーションは、USB-COMポートに接続されたQRコードリーダーからデータを読み取り、その内容をWindows上の任意のアプリケーションにキーボード入力としてシミュレートするツールです。
+特に、Shift_JISでエンコードされた日本語や改行を含むデータを正確に処理し、元の形式を再現することを目指します。
 
-- Generate cryptographic keys
-- Convert keys to QR codes
-- Copy keys to clipboard (Windows only)
+オフライン環境のPCでも動作可能なスタンドアロン実行ファイルとして提供されます。
 
-## Installation
+## 機能
 
-### Regular Installation
+*   指定したCOMポートからのデータ受信
+*   Shift_JISおよびUTF-8エンコーディングでのデータデコード
+*   デコードされたテキストのキーボード入力シミュレーション
+*   利用可能なCOMポートのリスト表示と選択
+*   単一実行ファイル (.exe) としてのパッケージング (Windows)
+*   COMポート読み取りおよびキーボード入力シミュレーションのテストモード
+
+## インストール (開発/ビルド環境)
+
+1.  このリポジトリをクローンします。
+
+    ```bash
+    git clone https://github.com/NikoToRA/QRkeyw.git
+    cd QRkeyw
+    ```
+
+2.  Python 3 がインストールされていることを確認します。
+
+3.  仮想環境を作成し、アクティベートします。
+
+    ```bash
+    python -m venv venv
+    # Windowsの場合
+    venv\Scripts\activate
+    # macOS/Linuxの場合 (Windowsでのビルドにのみ必要)
+    # source venv/bin/activate
+    ```
+
+4.  必要な依存ライブラリをインストールします。
+
+    ```bash
+    pip install -r requirements.txt
+    # Windowsでのビルドの場合、追加でWindows固有ライブラリをインストール
+    pip install -r requirements-win.txt
+    ```
+
+## ビルド (Windows実行ファイル)
+
+依存ライブラリのインストールが完了したら、以下のバッチファイルを実行してWindows実行ファイルをビルドします。
+
+*   64-bit (x64) ビルド:
+
+    ```bash
+    build_win_x64.bat
+    ```
+
+*   32-bit (x86) ビルド (未実装の可能性がありますが、スクリプトは存在します):
+
+    ```bash
+    build_win_x86.bat
+    ```
+
+ビルドが成功すると、`dist` ディレクトリ内に `QR2Key-App.exe` が生成されます。
+
+## 実行
+
+### 通常モード
+
+生成された `QR2Key-App.exe` をダブルクリックして実行します。
+
+1.  利用可能なCOMポートが表示されます。
+2.  リストから使用するCOMポートの番号を入力し、Enterキーを押します。
+3.  「QRコードをスキャンしてください...」と表示されたら、リーダーでQRコードを読み取ります。
+4.  読み取られたデータがデコードされ、3秒のカウントダウン後に現在のカーソル位置にキーボード入力されます。
+5.  再度QRコードの読み取り待ち状態に戻るか、オプションメニュー（COMポート変更、終了）が表示されます。
+
+### テストモード
+
+コマンドプロンプトから引数 `--test` を付けて実行します。
 
 ```bash
-# Install common dependencies
-pip install -r requirements.txt
-
-# On Windows, also install Windows-specific dependencies
-pip install -r requirements-win.txt  # Windows only
+QR2Key-App.exe --test
 ```
 
-## Building Windows Executables
-
-To build the Windows executables:
-
-1. On Windows, run the appropriate batch file:
-   - For 32-bit (x86): `build_win_x86.bat`
-   - For 64-bit (x64): `build_win_x64.bat`
-
-2. The executables will be created in the `dist` directory.
-
-## Development
-
-For development, it's recommended to use a virtual environment:
-
-```bash
-python -m venv venv
-# On Windows
-venv\Scripts\activate
-# On macOS/Linux
-source venv/bin/activate
-
-# Install dev dependencies
-pip install -r requirements.txt
-# On Windows
-pip install -r requirements-win.txt
-```
+テストモードでは、COMポートからの生データ読み取りテストや、キーボード入力シミュレーションの単体テストを選択して実行できます。
